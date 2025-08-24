@@ -8,9 +8,17 @@ const Dashboard: React.FC = () => {
   const { data: agentData } = useQuery(AGENT_ME)
   const { data: usersData, loading } = useQuery(AGENT_USERS)
 
+  // Helper function to check if user is active based on orderEndTime
+  const isUserActive = (orderEndTime: string) => {
+    if (!orderEndTime) return false
+    const endTime = new Date(orderEndTime)
+    const now = new Date()
+    return endTime > now
+  }
+
   const users = usersData?.agentUsers || []
-  const activeUsers = users.filter((user: any) => user.status === 1).length
-  const disabledUsers = users.filter((user: any) => user.status === 0).length
+  const activeUsers = users.filter((user: any) => isUserActive(user.orderEndTime)).length
+  const expiredUsers = users.filter((user: any) => !isUserActive(user.orderEndTime)).length
 
   const stats = [
     {
@@ -28,8 +36,8 @@ const Dashboard: React.FC = () => {
       bgColor: 'bg-green-100',
     },
     {
-      name: '禁用用户',
-      value: disabledUsers,
+      name: '已过期用户',
+      value: expiredUsers,
       icon: XCircleIcon,
       color: 'text-red-600',
       bgColor: 'bg-red-100',
@@ -108,12 +116,12 @@ const Dashboard: React.FC = () => {
               <div className="flex items-center">
                 <span
                   className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                    user.status === 1
+                    isUserActive(user.orderEndTime)
                       ? 'bg-green-100 text-green-800'
                       : 'bg-red-100 text-red-800'
                   }`}
                 >
-                  {user.status === 1 ? '活跃' : '禁用'}
+                  {isUserActive(user.orderEndTime) ? '活跃' : '已过期'}
                 </span>
               </div>
             </div>

@@ -25,26 +25,30 @@ export const AGENT_ME = gql`
 `
 
 export const AGENT_USERS = gql`
-  query AgentUsers {
-    agentUsers {
+  query AgentUsers($filter: UserFilter) {
+    agentUsers(filter: $filter) {
       id
       username
       status
       agentId
       createdAt
+      orderEndTime
+      wx
     }
   }
 `
 
 // User Management
 export const AGENT_CREATE_USER = gql`
-  mutation AgentCreateUser($username: String!, $password: String!) {
-    agentCreateUser(username: $username, password: $password) {
+  mutation AgentCreateUser($username: String!, $password: String!, $wx: String) {
+    agentCreateUser(username: $username, password: $password, wx: $wx) {
       id
       username
       status
       agentId
       createdAt
+      orderEndTime
+      wx
     }
   }
 `
@@ -57,6 +61,50 @@ export const AGENT_UPDATE_USER_STATUS = gql`
       status
       agentId
       createdAt
+      orderEndTime
+      wx
+    }
+  }
+`
+
+export const AGENT_UPDATE_USER_ORDER_END_TIME = gql`
+  mutation AgentUpdateUserOrderEndTime($userId: String!, $orderEndTime: String!) {
+    agentUpdateUserOrderEndTime(userId: $userId, orderEndTime: $orderEndTime) {
+      id
+      username
+      status
+      agentId
+      createdAt
+      orderEndTime
+      wx
+    }
+  }
+`
+
+export const AGENT_UPDATE_USER_PASSWORD = gql`
+  mutation AgentUpdateUserPassword($userId: String!, $newPassword: String!) {
+    agentUpdateUserPassword(userId: $userId, newPassword: $newPassword) {
+      id
+      username
+      status
+      agentId
+      createdAt
+      orderEndTime
+      wx
+    }
+  }
+`
+
+export const AGENT_UPDATE_USER_BASIC_INFO = gql`
+  mutation AgentUpdateUserBasicInfo($userId: String!, $wx: String!, $username: String!) {
+    agentUpdateUserBasicInfo(userId: $userId, wx: $wx, username: $username) {
+      id
+      username
+      status
+      agentId
+      createdAt
+      orderEndTime
+      wx
     }
   }
 `
@@ -74,6 +122,8 @@ export interface User {
   status: number
   agent_id: string
   createdAt: string
+  orderEndTime: string
+  wx: string
 }
 
 export interface AgentLoginInput {
@@ -89,9 +139,33 @@ export interface AgentChangePasswordInput {
 export interface CreateUserInput {
   username: string
   password: string
+  wx?: string
 }
 
 export interface UpdateUserStatusInput {
   userId: string
   status: number
+}
+
+export interface UpdateUserOrderEndTimeInput {
+  userId: string
+  orderEndTime: string
+}
+
+export interface UpdateUserPasswordInput {
+  userId: string
+  newPassword: string
+}
+
+export interface UpdateUserBasicInfoInput {
+  userId: string
+  wx: string
+  phone: string
+}
+
+// Filter definitions
+export interface UserFilter {
+  expirationStatus?: 'expired' | 'not_expired' | 'all'
+  search?: string
+  expiringInDays?: number
 }
