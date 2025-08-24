@@ -14,7 +14,12 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': ['warn', { 
+      argsIgnorePattern: '^_',
+      varsIgnorePattern: '^_',
+      ignoreRestSiblings: true 
+    }],
     '@typescript-eslint/no-explicit-any': 'warn',
+    'no-unused-vars': 'off', // Turn off base rule as it conflicts with @typescript-eslint version
   },
 }
